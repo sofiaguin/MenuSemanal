@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menú Semanal Saludable</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-6">Menú Semanal Saludable</h1>
+    <div id="menu" class="grid grid-cols-1 gap-4"></div>
+  </div>
+
+  <script>
+    const menu = [
+      { dia: "Lunes", color: "bg-blue-200" },
+      { dia: "Martes", color: "bg-green-200" },
+      { dia: "Miércoles", color: "bg-yellow-200" },
+      { dia: "Jueves", color: "bg-red-200" },
+      { dia: "Viernes", color: "bg-purple-200" },
+      { dia: "Sábado", color: "bg-pink-200" },
+      { dia: "Domingo", color: "bg-orange-200" }
+    ];
+
+    const recetas = [
+      { nombre: "Ensalada de quinoa y pollo", ingredientes: "Quinoa, pechuga de pollo, tomate, espinaca, aguacate, limón", instrucciones: "Cocinar la quinoa, asar el pollo y mezclar con los demás ingredientes." },
+      { nombre: "Sopa de lentejas con verduras", ingredientes: "Lentejas, zanahoria, papa, cebolla, ajo, espinacas", instrucciones: "Cocer las lentejas con las verduras hasta que estén tiernas." },
+      { nombre: "Omelette de espinaca y queso feta", ingredientes: "Huevos, espinaca, queso feta, cebolla", instrucciones: "Batir los huevos, añadir los ingredientes y cocinar en sartén." },
+      { nombre: "Wrap integral de pavo y vegetales", ingredientes: "Pan integral, pechuga de pavo, lechuga, tomate, mostaza", instrucciones: "Envolver los ingredientes en el pan integral y disfrutar." },
+      { nombre: "Pasta integral con verduras", ingredientes: "Pasta integral, calabacín, pimiento, cebolla, ajo, tomate", instrucciones: "Cocer la pasta y saltear las verduras, luego mezclar." },
+      { nombre: "Pollo al horno con batatas", ingredientes: "Pechuga de pollo, batatas, romero, ajo, aceite de oliva", instrucciones: "Hornear el pollo y las batatas con romero y ajo." },
+      { nombre: "Tofu salteado con verduras", ingredientes: "Tofu, zanahoria, brócoli, salsa de soja, ajo", instrucciones: "Saltear el tofu con las verduras y la salsa de soja." },
+      { nombre: "Arroz integral con garbanzos", ingredientes: "Arroz integral, garbanzos, cebolla, ajo, pimiento rojo", instrucciones: "Cocinar el arroz y saltear con los garbanzos y vegetales." },
+      { nombre: "Salmón a la plancha con espárragos", ingredientes: "Salmón, espárragos, limón, ajo, aceite de oliva", instrucciones: "Cocinar el salmón en sartén y servir con espárragos salteados." },
+      { nombre: "Tacos de aguacate y frijoles negros", ingredientes: "Tortillas, aguacate, frijoles negros, tomate, cilantro", instrucciones: "Rellenar las tortillas con los ingredientes y disfrutar." },
+      { nombre: "Bowl de arroz y pollo teriyaki", ingredientes: "Arroz, pollo, salsa teriyaki, brócoli, zanahoria", instrucciones: "Cocinar el arroz, saltear el pollo con salsa teriyaki y servir." },
+      { nombre: "Guiso de garbanzos y espinacas", ingredientes: "Garbanzos, espinacas, cebolla, ajo, tomate", instrucciones: "Cocer los garbanzos y agregar las espinacas y condimentos." }
+    ];
+
+    let usedRecipes = [];
+
+    function getRandomRecipe() {
+      const availableRecipes = recetas.filter(r => !usedRecipes.includes(r.nombre));
+      if (availableRecipes.length === 0) {
+        usedRecipes = []; 
+        return getRandomRecipe(); 
+      }
+      const selectedRecipe = availableRecipes[Math.floor(Math.random() * availableRecipes.length)];
+      usedRecipes.push(selectedRecipe.nombre);
+      return selectedRecipe;
+    }
+
+    function renderRecipes(dayIndex) {
+      const container = document.getElementById(`recipes-${dayIndex}`);
+      if (!container) return;
+      const comida = getRandomRecipe();
+      const cena = getRandomRecipe();
+
+      container.innerHTML = `
+        <div class="mt-2">
+          <h3 class="text-lg font-semibold">Comida: ${comida ? comida.nombre : "No disponible"}</h3>
+          <p><strong>Ingredientes:</strong> ${comida ? comida.ingredientes : "No disponible"}</p>
+          <p><strong>Instrucciones:</strong> ${comida ? comida.instrucciones : "No disponible"}</p>
+        </div>
+        <div class="mt-4">
+          <h3 class="text-lg font-semibold">Cena: ${cena ? cena.nombre : "No disponible"}</h3>
+          <p><strong>Ingredientes:</strong> ${cena ? cena.ingredientes : "No disponible"}</p>
+          <p><strong>Instrucciones:</strong> ${cena ? cena.instrucciones : "No disponible"}</p>
+        </div>
+      `;
+    }
+
+    const menuContainer = document.getElementById("menu");
+    menu.forEach((day, index) => {
+      const card = document.createElement("div");
+      card.className = `p-4 rounded-lg shadow-md ${day.color}`;
+      card.innerHTML = `
+        <h2 class="text-2xl font-bold">${day.dia}</h2>
+        <div id="recipes-${index}" class="mt-2"></div>
+        <button id="reload-${index}" class="mt-4 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700">Recargar</button>
+      `;
+      menuContainer.appendChild(card);
+      renderRecipes(index);
+
+      document.getElementById(`reload-${index}`).addEventListener("click", () => {
+        usedRecipes = usedRecipes.filter((_, i) => i < index * 2);
+        renderRecipes(index);
+      });
+    });
+  </script>
+</body>
+</html>
